@@ -1,0 +1,284 @@
+DROP DATABASE RESTAURANT;
+CREATE DATABASE RESTAURANT;
+
+USE RESTAURANT;
+
+
+CREATE TABLE SUPPLIER
+(ID INT NOT NULL PRIMARY KEY,
+SUPPLIER_NAME VARCHAR(50),
+SUPPLIER_POSTCODE VARCHAR(10),
+ITEM_SUPPLIED VARCHAR(100)
+
+
+);
+
+INSERT INTO SUPPLIER
+VALUES
+(200, 'ANA KITCHEN', 'SW16 9PP',  'Potatoes'),
+(300, 'ARABIA', 'N16 9GG',  'Burger Bun'),
+(400, 'KING SOLOMON','NW110 9DY', 'Beef'),
+(500, 'HAVANA', 'N16 9SN','Chicken'),
+(600, 'ZANZIBARIAN WEST','SE10 9SN', 'Veg/Burger Buns/Chips');
+
+
+
+CREATE TABLE RESTAURANT
+(REST_ID INT NOT NULL PRIMARY KEY,
+REST_NAME VARCHAR(50) NOT NULL ,
+OPEN_SINCE VARCHAR(50),
+OPENING_TIME TIME,
+CLOSING_TIME TIME,
+SUPPLIER_ID INT,
+FOREIGN KEY (SUPPLIER_ID) REFERENCES SUPPLIER(ID)
+);
+
+
+INSERT INTO RESTAURANT
+(REST_ID, REST_NAME, OPEN_SINCE,OPENING_TIME, CLOSING_TIME, SUPPLIER_ID)
+ VALUES
+(1, 'Mccy1','1990', '08:30:00', '18:30:00', 200),
+(2, 'Mccy2', '1999', '11:00:00', '22:00:00',400),
+(3, 'Mccy3', '2007', '14:30:00', '22:30:00',400),
+(4, 'Mccy4','2021',  '08:00:00', '20:00:00', 500),
+(5, 'Mccy5', '2013', '06:30:00', '18:30:00', 600);
+
+
+DROP TABLE LOCATION;
+CREATE TABLE LOCATION
+(LOCATION_ID INT NOT NULL PRIMARY KEY,
+POSTCODE VARCHAR(50),
+REST_ID INT,
+FOREIGN KEY (REST_ID) REFERENCES RESTAURANT(REST_ID)
+
+);
+
+INSERT INTO LOCATION
+VALUES
+ (1, 'SW16 5YN', 1),
+(2,'W1 2FN',2),
+(3, 'NW1 6TP',3),
+(4,  'SE7 7NN',4),
+(5,'SE10 7JK',5)
+;
+
+
+
+DROP TABLE EMPLOYEE;
+CREATE TABLE Employee (  
+id int  NOT NULL UNIQUE ,
+first_name varchar(300), 
+last_name varchar(300), 
+restaurant_id int, 
+job_title varchar(300),  
+sales int,
+shift_availabilities varchar(1000),
+PRIMARY KEY(id),
+FOREIGN KEY (restaurant_id) REFERENCES RESTAURANT(REST_ID)
+);
+
+INSERT INTO Employee
+VALUES (1,'Georgio','Johnson', 1 ,'Server',1890,'Mon/Tues/Wed/Thurs/Sun');
+INSERT INTO Employee
+VALUES (2,'Amelia','Humphreys',1,'Server',1300,'Mon/Tues/Thurs/Fri/Sat/Sun');
+INSERT INTO Employee
+VALUES (3,'Kimberley','Bryant',2,'Rider',2000,'Mon/Tues/Wed/Thurs/Fri/Sat');
+INSERT INTO Employee
+VALUES (4,'Frank','Kim',1,'Server',2000,'Mon/Tues/Wed/Thurs/Sat/Sun');
+INSERT INTO Employee
+VALUES (5,'Amelia','Cox',3,'Rider',1500,'Mon/Wed/Thurs/Fri/Sat');
+INSERT INTO Employee
+VALUES (6,'Anthony','Lutumba',5,'Server',2800,'Mon/Tues/Wed/Thurs/Sat/Sun');
+INSERT INTO Employee
+VALUES (7,'Laura','Ferguson',4,'Cashier',200,'Mon/Tues/Wed/Thurs/Fri');
+INSERT INTO Employee
+VALUES (8,'Ruth','Okoji',2,'Server',1500,'Mon/Tues/Wed/Thurs/Fri/Sat');
+INSERT INTO Employee
+VALUES (9,'Georgio','Romero',5,'Rider',800,'Mon/Tues/Wed/Thurs/Fri/Sat');
+INSERT INTO Employee
+VALUES (10,'Bianca','Ward',1,'Server',500,'Mon/Tues/Wed/Thurs/Fri/Sat');
+INSERT INTO Employee
+VALUES (11,'Edward','Murphy',4,'Rider',1500,'Mon/Tues/Wed/Thurs/Fri/Sun');
+INSERT INTO Employee
+VALUES (12,'John','Adams',3,'Server',1200,'Mon/Tues/Wed/Thurs/Fri/Sat/Sun');
+INSERT INTO Employee
+VALUES (13,'Stacey','Moore',4,'Server',1500,'Tues/Wed/Thurs/Fri/Sat');
+INSERT INTO Employee
+VALUES (14,'Juan','Ortiz',3,'Cashier',2010,'Mon/Tues/Wed/Thurs/Fri/Sun');
+INSERT INTO Employee
+VALUES (15,'Gregory','Simmons',5,'Server',1500,'Mon/Tues');
+INSERT INTO Employee
+VALUES (16,'Antonio','Alvez',3,'Server',1500,'Mon/Tues/');
+INSERT INTO Employee
+VALUES (17,'Casey','Simmons',5,'Server',1800,'Mon/Tues');
+INSERT INTO Employee
+VALUES (18,'Christina','Costa',2,'Server',1500,'Mon/Tues/Wed/Fri/Sat');
+INSERT INTO Employee
+VALUES (19,'Grace','Nkosi',2,'Server',100,'Mon/Tues');
+INSERT INTO Employee
+VALUES (20,'Ned','Flanders',4,'Server',1409,'Mon/Tues/Sun');
+
+DROP TABLE MANAGER;
+CREATE TABLE Manager(
+  employee_id int NOT NULL,
+  Restaurant_id_managed INT,
+  first_name varchar(300),
+  last_name varchar(300),
+  PRIMARY KEY(employee_id),
+  FOREIGN KEY (Restaurant_id_managed) REFERENCES RESTAURANT(REST_ID)
+  
+  ); 
+  
+-- I MADE CHANGES HERE....WE HAVE ONLY 5 RESTAURANTS AND FOR FK, I MAKE REST CHANGED ONE NUMBER--
+INSERT INTO Manager 
+VALUES (1,'1','Georgio','Johnson');
+INSERT INTO Manager 
+VALUES (8,'2','Ruth','Okoji');
+INSERT INTO Manager 
+VALUES (12,'3','John','Adams');
+INSERT INTO Manager 
+VALUES (15,'5','Gregory','Simmons');
+INSERT INTO Manager 
+VALUES (20,'4','Ned','Flanders');
+
+
+
+
+
+
+
+SELECT * FROM RESTAURANT;
+SELECT * FROM LOCATION;
+SELECT * FROM SUPPLIER;
+SELECT * FROM EMPLOYEE;
+SELECT * FROM MANAGER;
+
+
+
+
+ -- First Scenario--
+SELECT FIRST_NAME, LAST_NAME, shift_availabilities
+FROM EMPLOYEE
+WHERE RESTAURANT_ID='1' AND shift_availabilities LIKE '%THUR%' AND FIRST_NAME!='AMELIA';
+
+
+
+-- Second Scenario--
+UPDATE Employee
+SET last_name = 'Omar'
+WHERE id= 3;
+SELECT * FROM EMPLOYEE;
+
+-- THIRD SCENARIO--
+drop view CHANGING_SUPPLIER;
+CREATE VIEW CHANGING_SUPPLIER AS
+SELECT s.supplier_name, s.item_supplied, S.SUPPLIER_POSTCODE AS 'SUPPLIER POSTCODE'
+FROM RESTAURANT AS R
+INNER JOIN
+LOCATION AS L
+ON
+R.REST_ID=L.REST_ID
+INNER JOIN
+SUPPLIER AS S
+ON
+R.SUPPLIER_ID=S.ID
+HAVING SUPPLIER_POSTCODE LIKE 'S%' AND SUPPLIER_POSTCODE!='SW16 9PP';
+
+SELECT * FROM CHANGING_SUPPLIER;
+
+-- first query before the view was created--
+SELECT S.SUPPLIER_POSTCODE AS 'SUPPLIER POSTCODE'
+FROM RESTAURANT AS R
+INNER JOIN
+LOCATION AS L
+ON
+R.REST_ID=L.REST_ID
+INNER JOIN
+SUPPLIER AS S
+ON
+R.SUPPLIER_ID=S.ID
+HAVING SUPPLIER_POSTCODE LIKE 'S%' AND SUPPLIER_POSTCODE!='SW16 9PP';
+
+
+
+
+
+
+
+-- FOURTH SCENARIO--
+SELECT M.RESTAURANT_ID_MANAGED, M.FIRST_NAME, M.LAST_NAME, E.shift_availabilities
+FROM MANAGER AS M
+INNER JOIN
+EMPLOYEE AS E
+ON
+E.ID=M.EMPLOYEE_ID
+HAVING RESTAURANT_ID_MANAGED LIKE '%3%';
+
+
+ -- SCENARIO 5: when are the managers working?--
+
+SELECT FIRST_NAME, LAST_NAME, SHIFT_AVAILABILITIES
+FROM EMPLOYEE 
+WHERE FIRST_NAME IN
+(SELECT FIRST_NAME
+FROM MANAGER);
+
+
+-- scenario 6
+DELIMITER //
+
+
+DROP FUNCTION HIGH_SALES;
+
+
+DELIMITER //
+CREATE FUNCTION HIGH_SALES (SALES INT)
+RETURNS VARCHAR(50)
+DETERMINISTIC
+BEGIN
+DECLARE ACHIEVERS VARCHAR(20);
+    IF SALES > 1500 THEN
+    SET ACHIEVERS = 'HIGH ACHIEVER';
+    ELSEIF SALES BETWEEN 500 AND 1500 THEN
+    SET ACHIEVERS = 'ON TRACK';
+    ELSEIF SALES<500 THEN
+    SET ACHIEVERS= 'TO IMPROVE';
+    END IF;
+
+RETURN ACHIEVERS;
+END //
+DELIMITER ;
+
+SELECT 
+FIRST_NAME,
+LAST_NAME,
+SALES,
+HIGH_SALES(SALES) AS 'High Achiever'
+FROM 
+EMPLOYEE
+;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
